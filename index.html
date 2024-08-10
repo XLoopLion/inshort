@@ -46,15 +46,12 @@
 
         .news-card.visible {
             transform: translateY(0);
-            /* opacity: 1; */
-            transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
         }
 
         @keyframes zoomIn {
             from {
                 transform: scale(0.9);
             }
-
             to {
                 transform: scale(1);
             }
@@ -64,7 +61,6 @@
             from {
                 transform: scale(1);
             }
-
             to {
                 transform: scale(0.9);
             }
@@ -74,7 +70,6 @@
             from {
                 transform: translateY(0%);
             }
-
             to {
                 transform: translateY(-100%);
             }
@@ -84,7 +79,6 @@
             from {
                 transform: translateY(-100%);
             }
-
             to {
                 transform: translateY(0);
             }
@@ -147,24 +141,18 @@
 
     <script>
         function formatDate(dateString) {
-            // Create a Date object from the date string
             const date = new Date(dateString);
-
-            // Options for formatting
             const options = {
                 day: 'numeric',
                 month: 'short',
                 year: 'numeric',
                 hour: 'numeric',
                 minute: 'numeric',
-                hour12: true // Use 12-hour clock
+                hour12: true
             };
-
-            // Format date using Intl.DateTimeFormat
-            const formattedDate = new Intl.DateTimeFormat('en-GB', options).format(date);
-
-            return formattedDate;
+            return new Intl.DateTimeFormat('en-GB', options).format(date);
         }
+
         const newsData = [
             {
                 "hero_image_url": "https://quantana.com.au/wp-content/uploads/2023/09/px4-home-jpg.webp",
@@ -228,16 +216,22 @@
 
         let currentIndex = 0;
         const cardElements = document.querySelectorAll('.news-card');
+        let isTransitioning = false;
+        let lastTouchEnd = 0;
 
         function slideToNext() {
+            if (isTransitioning) return;
+            isTransitioning = true;
+
             const currentCard = cardElements[currentIndex];
             const nextIndex = (currentIndex + 1) % cardElements.length;
             const nextCard = cardElements[nextIndex];
-        
-            if(currentCard.classList.contains('index-2')) {
-                return false;
+
+            if (currentCard.classList.contains('index-2')) {
+                isTransitioning = false;
+                return;
             }
-                        
+
             currentCard.classList.add('slide-up', 'zoom-out', 'index-1');
             nextCard.classList.add('visible', 'zoom-in', 'index-2');
 
@@ -245,17 +239,23 @@
                 currentCard.classList.remove('slide-up', 'visible', 'zoom-out', 'index-1');
                 nextCard.classList.remove('zoom-in', 'index-2');
                 currentIndex = nextIndex;
-            }, 500); // Match this duration with animation duration
+                isTransitioning = false;
+            }, 500);
         }
 
         function slideToPrevious() {
+            if (isTransitioning) return;
+            isTransitioning = true;
+
             const currentCard = cardElements[currentIndex];
             const prevIndex = (currentIndex - 1 + cardElements.length) % cardElements.length;
             const prevCard = cardElements[prevIndex];
-            
-            if(currentCard.classList.contains('index-1')) {
-                return false;
+
+            if (currentCard.classList.contains('index-1')) {
+                isTransitioning = false;
+                return;
             }
+
             currentCard.classList.add('zoom-out', 'index-2');
             prevCard.classList.add('visible', 'slide-down', 'zoom-in', 'index-1');
 
@@ -263,7 +263,8 @@
                 currentCard.classList.remove('visible', 'zoom-out', 'index-2');
                 prevCard.classList.remove('slide-down', 'zoom-in', 'index-1');
                 currentIndex = prevIndex;
-            }, 500); // Match this duration with animation duration
+                isTransitioning = false;
+            }, 500);
         }
 
         container.addEventListener('wheel', (event) => {
@@ -272,10 +273,8 @@
             } else if (event.deltaY < 0) {
                 slideToPrevious();
             }
-            event.preventDefault(); // Prevent default scroll behavior
+            event.preventDefault();
         });
-
-        let touchStartY = 0;
 
         container.addEventListener('touchstart', (e) => {
             touchStartY = e.touches[0].clientY;
@@ -283,14 +282,22 @@
 
         container.addEventListener('touchend', (e) => {
             const touchEndY = e.changedTouches[0].clientY;
-            if (touchStartY - touchEndY > 50) {
+            const now = Date.now();
+
+            if (now - lastTouchEnd < 500) {
+                return; // Prevent rapid consecutive swipe events
+            }
+            lastTouchEnd = now;
+
+            const swipeDistance = touchStartY - touchEndY;
+            if (swipeDistance > 50) {
                 slideToNext();
-            } else if (touchEndY - touchStartY > 50) {
+            } else if (swipeDistance < -50) {
                 slideToPrevious();
             }
         });
 
-        document.body.style.overflow = 'hidden'; // Prevent default scrolling
+        document.body.style.overflow = 'hidden';
     </script>
 </body>
 </html>
