@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide Up News App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            overflow: hidden;
+        }
+        .index-1 {
+            z-index: 4;
+        }
+        .index-2 {
+            z-index: 2;
+        }
+
+        .news-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .news-card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            transition: transform 0.5s ease-in-out, z-index 0s linear 0.5s, opacity 0.5s ease-in-out;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            transform: translateY(100%);
+        }
+
+        .news-card.visible {
+            transform: translateY(0);
+            /* opacity: 1; */
+            transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+        }
+
+        @keyframes zoomIn {
+            from {
+                transform: scale(0.9);
+            }
+
+            to {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes zoomOut {
+            from {
+                transform: scale(1);
+            }
+
+            to {
+                transform: scale(0.9);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(0%);
+            }
+
+            to {
+                transform: translateY(-100%);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+            }
+
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .news-card.zoom-in {
+            animation: zoomIn 0.5s forwards;
+        }
+
+        .news-card.zoom-out {
+            animation: zoomOut 0.5s forwards;
+        }
+
+        .news-card.slide-up {
+            animation: slideUp 0.5s forwards;
+        }
+
+        .news-card.slide-down {
+            animation: slideDown 0.5s forwards;
+        }
+
+        .news-card img {
+            width: 100%;
+            height: 40%;
+            object-fit: cover;
+        }
+
+        .news-content {
+            padding: 15px;
+            height: auto;
+            overflow: hidden;
+        }
+
+        .news-title {
+            font-size: 17px;
+            padding: 10px;
+            font-weight: bolder;
+            margin: 0;
+        }
+
+        .news-summary {
+            font-size: 17px;
+            color: black;
+            padding: 10px;
+            margin-top: 5px;
+        }
+
+        .news-date {
+            font-size: small;
+            padding: 25px;
+            color: #555;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="news-container" id="newsContainer">
+        <!-- News cards will be injected here by JavaScript -->
+    </div>
+
+    <script>
+        function formatDate(dateString) {
+            // Create a Date object from the date string
+            const date = new Date(dateString);
+
+            // Options for formatting
+            const options = {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+                hour12: true // Use 12-hour clock
+            };
+
+            // Format date using Intl.DateTimeFormat
+            const formattedDate = new Intl.DateTimeFormat('en-GB', options).format(date);
+
+            return formattedDate;
+        }
+        const newsData = [
+            {
+                "hero_image_url": "https://quantana.com.au/wp-content/uploads/2023/09/px4-home-jpg.webp",
+                "title": "Global Markets Rally Amid Positive Economic Data",
+                "summary": "Stock markets around the world saw significant gains today as investors reacted positively to new economic data showing increased consumer spending and lower unemployment rates.",
+                "link_url": "https://example.com/news/global-markets-rally",
+                "timestamp": "2024-08-09T14:30:00Z"
+            },
+            {
+                "hero_image_url": "https://quantana.com.au/wp-content/uploads/2023/10/Web-App-Development-jpg.webp",
+                "title": "Innovative Tech Startup Launches AI-Powered Health App",
+                "summary": "A new AI-powered health application promises to revolutionize the way we approach personal wellness by offering personalized insights and real-time health monitoring.",
+                "link_url": "https://example.com/news/ai-health-app-launch",
+                "timestamp": "2024-08-09T13:45:00Z"
+            },
+            {
+                "hero_image_url": "https://quantana.com.au/wp-content/uploads/2023/10/Mobile-App-Development-jpg.webp",
+                "title": "Wildfires Continue to Ravage California",
+                "summary": "Firefighters are battling a series of wildfires across California that have already destroyed hundreds of homes and forced thousands to evacuate.",
+                "link_url": "https://example.com/news/california-wildfires-2024",
+                "timestamp": "2024-08-09T12:15:00Z"
+            },
+            {
+                "hero_image_url": "https://quantana.com.au/wp-content/uploads/2024/07/Blog-Image_11zon-1.jpg",
+                "title": "New Study Links Sleep Quality to Heart Health",
+                "summary": "A recent study has found a strong correlation between sleep quality and cardiovascular health, suggesting that better sleep could lead to reduced risks of heart disease.",
+                "link_url": "https://example.com/news/sleep-quality-heart-health",
+                "timestamp": "2024-08-09T11:30:00Z"
+            },
+            {
+                "hero_image_url": "https://quantana.com.au/wp-content/uploads/2023/10/Urge-Surfing-case-study-2-jpg.webp",
+                "title": "Major Breakthrough in Renewable Energy Technology",
+                "summary": "Scientists have announced a major breakthrough in renewable energy technology, which could significantly reduce the cost of solar power and accelerate the transition to green energy.",
+                "link_url": "https://example.com/news/renewable-energy-breakthrough",
+                "timestamp": "2024-08-09T10:00:00Z"
+            }
+        ];
+
+        const container = document.getElementById('newsContainer');
+
+        newsData.forEach((news, index) => {
+            const card = document.createElement('div');
+            card.classList.add('news-card');
+            if (index === 0) card.classList.add('visible'); // Show the first card
+
+            card.innerHTML = `
+                <img src="${news.hero_image_url}" alt="${news.title}">
+                <div class="news-content">
+                    <h2 class="news-title">${news.title}</h2>
+                    <p class="news-summary">${news.summary}</p>
+                    <p class="news-date">${formatDate(new Date(news.timestamp).toLocaleString('en-GB', { timeZone: 'America/New_York' }))}</p>
+                </div>
+            `;
+
+            card.addEventListener('click', () => {
+                window.location.href = news.link_url;
+            });
+
+            container.appendChild(card);
+        });
+
+        let currentIndex = 0;
+        const cardElements = document.querySelectorAll('.news-card');
+
+        function slideToNext() {
+            const currentCard = cardElements[currentIndex];
+            const nextIndex = (currentIndex + 1) % cardElements.length;
+            const nextCard = cardElements[nextIndex];
+        
+            if(currentCard.classList.contains('index-2')) {
+                return false;
+            }
+                        
+            currentCard.classList.add('slide-up', 'zoom-out', 'index-1');
+            nextCard.classList.add('visible', 'zoom-in', 'index-2');
+
+            setTimeout(() => {
+                currentCard.classList.remove('slide-up', 'visible', 'zoom-out', 'index-1');
+                nextCard.classList.remove('zoom-in', 'index-2');
+                currentIndex = nextIndex;
+            }, 500); // Match this duration with animation duration
+        }
+
+        function slideToPrevious() {
+            const currentCard = cardElements[currentIndex];
+            const prevIndex = (currentIndex - 1 + cardElements.length) % cardElements.length;
+            const prevCard = cardElements[prevIndex];
+            
+            if(currentCard.classList.contains('index-1')) {
+                return false;
+            }
+            currentCard.classList.add('zoom-out', 'index-2');
+            prevCard.classList.add('visible', 'slide-down', 'zoom-in', 'index-1');
+
+            setTimeout(() => {
+                currentCard.classList.remove('visible', 'zoom-out', 'index-2');
+                prevCard.classList.remove('slide-down', 'zoom-in', 'index-1');
+                currentIndex = prevIndex;
+            }, 500); // Match this duration with animation duration
+        }
+
+        container.addEventListener('wheel', (event) => {
+            if (event.deltaY > 0) {
+                slideToNext();
+            } else if (event.deltaY < 0) {
+                slideToPrevious();
+            }
+            event.preventDefault(); // Prevent default scroll behavior
+        });
+
+        let touchStartY = 0;
+
+        container.addEventListener('touchstart', (e) => {
+            touchStartY = e.touches[0].clientY;
+        });
+
+        container.addEventListener('touchend', (e) => {
+            const touchEndY = e.changedTouches[0].clientY;
+            if (touchStartY - touchEndY > 50) {
+                slideToNext();
+            } else if (touchEndY - touchStartY > 50) {
+                slideToPrevious();
+            }
+        });
+
+        document.body.style.overflow = 'hidden'; // Prevent default scrolling
+    </script>
+</body>
+</html>
