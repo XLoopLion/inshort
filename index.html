@@ -11,11 +11,13 @@
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
-            overflow: hidden;
+            overflow: hidden; /* Ensure no scrolling occurs */
         }
+
         .index-1 {
             z-index: 4;
         }
+
         .index-2 {
             z-index: 2;
         }
@@ -28,6 +30,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            touch-action: none; /* Prevent default touch actions */
         }
 
         .news-card {
@@ -52,6 +55,7 @@
             from {
                 transform: scale(0.9);
             }
+
             to {
                 transform: scale(1);
             }
@@ -61,6 +65,7 @@
             from {
                 transform: scale(1);
             }
+
             to {
                 transform: scale(0.9);
             }
@@ -70,6 +75,7 @@
             from {
                 transform: translateY(0%);
             }
+
             to {
                 transform: translateY(-100%);
             }
@@ -79,6 +85,7 @@
             from {
                 transform: translateY(-100%);
             }
+
             to {
                 transform: translateY(0);
             }
@@ -203,7 +210,7 @@
                 <div class="news-content">
                     <h2 class="news-title">${news.title}</h2>
                     <p class="news-summary">${news.summary}</p>
-                    <p class="news-date">${formatDate(new Date(news.timestamp).toLocaleString('en-GB', { timeZone: 'America/New_York' }))}</p>
+                    <p class="news-date">${formatDate(news.timestamp)}</p>
                 </div>
             `;
 
@@ -291,14 +298,15 @@
             lastTouchEnd = now;
 
             const swipeDistance = touchStartY - touchEndY;
-            if (swipeDistance > 50) {
-                slideToNext();
-            } else if (swipeDistance < -50) {
-                slideToPrevious();
+            if (Math.abs(swipeDistance) > 50) { // Ensure it's a significant swipe
+                if (swipeDistance > 0) {
+                    slideToNext();
+                } else {
+                    slideToPrevious();
+                }
             }
         });
-
-        document.body.style.overflow = 'hidden';
     </script>
 </body>
+
 </html>
