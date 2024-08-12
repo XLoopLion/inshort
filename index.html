@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,12 +13,15 @@
             background-color: #f4f4f4;
             overflow: hidden; /* Ensure no scrolling occurs */
         }
+
         .index-1 {
             z-index: 4;
         }
+
         .index-2 {
             z-index: 2;
         }
+
         .news-container {
             position: relative;
             width: 100vw;
@@ -28,6 +32,7 @@
             justify-content: center;
             touch-action: none; /* Prevent default touch actions */
         }
+
         .news-card {
             position: absolute;
             width: 100%;
@@ -41,75 +46,93 @@
             left: 0;
             transform: translateY(100%);
         }
+
         .news-card.visible {
             transform: translateY(0);
         }
+
         @keyframes zoomIn {
             from {
                 transform: scale(0.9);
             }
+
             to {
                 transform: scale(1);
             }
         }
+
         @keyframes zoomOut {
             from {
                 transform: scale(1);
             }
+
             to {
                 transform: scale(0.9);
             }
         }
+
         @keyframes slideUp {
             from {
                 transform: translateY(0%);
             }
+
             to {
                 transform: translateY(-100%);
             }
         }
+
         @keyframes slideDown {
             from {
                 transform: translateY(-100%);
             }
+
             to {
                 transform: translateY(0);
             }
         }
+
         .news-card.zoom-in {
             animation: zoomIn 0.5s forwards;
         }
+
         .news-card.zoom-out {
             animation: zoomOut 0.5s forwards;
         }
+
         .news-card.slide-up {
             animation: slideUp 0.5s forwards;
         }
+
         .news-card.slide-down {
             animation: slideDown 0.5s forwards;
         }
+
         .news-card img {
             width: 100%;
             height: 40%;
             object-fit: cover;
         }
+
         .news-content {
             padding: 15px;
             height: auto;
             overflow: hidden;
         }
+
         .news-title {
             font-size: 17px;
             padding: 10px;
             font-weight: bolder;
             margin: 0;
         }
+
         .news-summary {
             font-size: 17px;
             color: black;
             padding: 10px;
             margin-top: 5px;
         }
+
         .news-date {
             font-size: small;
             padding: 25px;
@@ -117,10 +140,12 @@
         }
     </style>
 </head>
+
 <body>
     <div class="news-container" id="newsContainer">
         <!-- News cards will be injected here by JavaScript -->
     </div>
+
     <script>
         function formatDate(dateString) {
             const date = new Date(dateString);
@@ -210,6 +235,11 @@
             const nextIndex = (currentIndex + 1) % cardElements.length;
             const nextCard = cardElements[nextIndex];
 
+            if (currentCard.classList.contains('index-2')) {
+                isTransitioning = false;
+                return;
+            }
+
             currentCard.classList.add('slide-up', 'zoom-out', 'index-1');
             nextCard.classList.add('visible', 'zoom-in', 'index-2');
 
@@ -228,6 +258,11 @@
             const currentCard = cardElements[currentIndex];
             const prevIndex = (currentIndex - 1 + cardElements.length) % cardElements.length;
             const prevCard = cardElements[prevIndex];
+
+            if (currentCard.classList.contains('index-1')) {
+                isTransitioning = false;
+                return;
+            }
 
             currentCard.classList.add('zoom-out', 'index-2');
             prevCard.classList.add('visible', 'slide-down', 'zoom-in', 'index-1');
@@ -273,4 +308,5 @@
         });
     </script>
 </body>
+
 </html>
