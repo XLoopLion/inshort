@@ -218,6 +218,7 @@
         const cardElements = document.querySelectorAll('.news-card');
         let isTransitioning = false;
         let lastTouchEnd = 0;
+        let touchStartY = 0;
 
         function slideToNext() {
             if (isTransitioning) return;
@@ -285,7 +286,7 @@
             const now = Date.now();
 
             if (now - lastTouchEnd < 500) {
-                return; // Prevent rapid consecutive swipe events
+                return;
             }
             lastTouchEnd = now;
 
