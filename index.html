@@ -1,213 +1,223 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Slide Up News App</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            overflow: hidden;
-            /* Ensure no scrolling occurs */
-            -webkit-overflow-scrolling: auto;
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+        overflow: hidden;
+        /* Ensure no scrolling occurs */
+        -webkit-overflow-scrolling: auto;
+      }
+
+      .index-1 {
+        z-index: 4;
+      }
+
+      .index-2 {
+        z-index: 2;
+      }
+
+      .news-container {
+        position: relative;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        touch-action: none;
+        /* Prevent default touch actions */
+      }
+
+      .news-card {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: white;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        transition: transform 0.5s ease-in-out, z-index 0s linear 0.5s,
+          opacity 0.5s ease-in-out;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        transform: translateY(100%);
+      }
+
+      .news-card.visible {
+        transform: translateY(0);
+      }
+
+      @keyframes zoomIn {
+        from {
+          transform: scale(0.9);
         }
 
-        .index-1 {
-            z-index: 4;
+        to {
+          transform: scale(1);
+        }
+      }
+
+      @keyframes zoomOut {
+        from {
+          transform: scale(1);
         }
 
-        .index-2 {
-            z-index: 2;
+        to {
+          transform: scale(0.9);
+        }
+      }
+
+      @keyframes slideUp {
+        from {
+          transform: translateY(0%);
         }
 
-        .news-container {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            touch-action: none;
-            /* Prevent default touch actions */
+        to {
+          transform: translateY(-100%);
+        }
+      }
+
+      @keyframes slideDown {
+        from {
+          transform: translateY(-100%);
         }
 
-        .news-card {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
-            transition: transform 0.5s ease-in-out, z-index 0s linear 0.5s, opacity 0.5s ease-in-out;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            transform: translateY(100%);
+        to {
+          transform: translateY(0);
         }
+      }
 
-        .news-card.visible {
-            transform: translateY(0);
-        }
+      .news-card.zoom-in {
+        animation: zoomIn 0.5s forwards;
+      }
 
-        @keyframes zoomIn {
-            from {
-                transform: scale(0.9);
-            }
+      .news-card.zoom-out {
+        animation: zoomOut 0.5s forwards;
+      }
 
-            to {
-                transform: scale(1);
-            }
-        }
+      .news-card.slide-up {
+        animation: slideUp 0.5s forwards;
+      }
 
-        @keyframes zoomOut {
-            from {
-                transform: scale(1);
-            }
+      .news-card.slide-down {
+        animation: slideDown 0.5s forwards;
+      }
 
-            to {
-                transform: scale(0.9);
-            }
-        }
+      .news-card img {
+        width: 100%;
+        height: 40%;
+        object-fit: cover;
+      }
 
-        @keyframes slideUp {
-            from {
-                transform: translateY(0%);
-            }
+      .news-content {
+        padding: 15px;
+        height: auto;
+        overflow: hidden;
+      }
 
-            to {
-                transform: translateY(-100%);
-            }
-        }
+      .news-title {
+        font-size: 17px;
+        padding: 10px;
+        font-weight: bolder;
+        margin: 0;
+      }
 
-        @keyframes slideDown {
-            from {
-                transform: translateY(-100%);
-            }
+      .news-summary {
+        font-size: 17px;
+        color: black;
+        padding: 10px;
+        margin-top: 5px;
+      }
 
-            to {
-                transform: translateY(0);
-            }
-        }
-
-        .news-card.zoom-in {
-            animation: zoomIn 0.5s forwards;
-        }
-
-        .news-card.zoom-out {
-            animation: zoomOut 0.5s forwards;
-        }
-
-        .news-card.slide-up {
-            animation: slideUp 0.5s forwards;
-        }
-
-        .news-card.slide-down {
-            animation: slideDown 0.5s forwards;
-        }
-
-        .news-card img {
-            width: 100%;
-            height: 40%;
-            object-fit: cover;
-        }
-
-        .news-content {
-            padding: 15px;
-            height: auto;
-            overflow: hidden;
-        }
-
-        .news-title {
-            font-size: 17px;
-            padding: 10px;
-            font-weight: bolder;
-            margin: 0;
-        }
-
-        .news-summary {
-            font-size: 17px;
-            color: black;
-            padding: 10px;
-            margin-top: 5px;
-        }
-
-        .news-date {
-            font-size: small;
-            padding: 25px;
-            color: #555;
-        }
+      .news-date {
+        font-size: small;
+        padding: 25px;
+        color: #555;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <div class="news-container" id="newsContainer">
-        <!-- News cards will be injected here by JavaScript -->
+      <!-- News cards will be injected here by JavaScript -->
     </div>
     <script>
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            const options = {
-                day: 'numeric',
-                month: 'short',
-                year: 'numeric',
-                hour: 'numeric',
-                minute: 'numeric',
-                hour12: true
-            };
-            return new Intl.DateTimeFormat('en-GB', options).format(date);
-        }
+      function formatDate(dateString) {
+        const date = new Date(dateString);
+        const options = {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+          hour: "numeric",
+          minute: "numeric",
+          hour12: true,
+        };
+        return new Intl.DateTimeFormat("en-GB", options).format(date);
+      }
 
-        const newsData = [
-            {
-                "hero_image_url": "https://quantana.com.au/wp-content/uploads/2023/09/px4-home-jpg.webp",
-                "title": "Global Markets Rally Amid Positive Economic Data",
-                "summary": "Stock markets around the world saw significant gains today as investors reacted positively to new economic data showing increased consumer spending and lower unemployment rates.",
-                "link_url": "https://example.com/news/global-markets-rally",
-                "timestamp": "2024-08-09T14:30:00Z"
-            },
-            {
-                "hero_image_url": "https://quantana.com.au/wp-content/uploads/2023/10/Web-App-Development-jpg.webp",
-                "title": "Innovative Tech Startup Launches AI-Powered Health App",
-                "summary": "A new AI-powered health application promises to revolutionize the way we approach personal wellness by offering personalized insights and real-time health monitoring.",
-                "link_url": "https://example.com/news/ai-health-app-launch",
-                "timestamp": "2024-08-09T13:45:00Z"
-            },
-            {
-                "hero_image_url": "https://quantana.com.au/wp-content/uploads/2023/10/Mobile-App-Development-jpg.webp",
-                "title": "Wildfires Continue to Ravage California",
-                "summary": "Firefighters are battling a series of wildfires across California that have already destroyed hundreds of homes and forced thousands to evacuate.",
-                "link_url": "https://example.com/news/california-wildfires-2024",
-                "timestamp": "2024-08-09T12:15:00Z"
-            },
-            {
-                "hero_image_url": "https://quantana.com.au/wp-content/uploads/2024/07/Blog-Image_11zon-1.jpg",
-                "title": "New Study Links Sleep Quality to Heart Health",
-                "summary": "A recent study has found a strong correlation between sleep quality and cardiovascular health, suggesting that better sleep could lead to reduced risks of heart disease.",
-                "link_url": "https://example.com/news/sleep-quality-heart-health",
-                "timestamp": "2024-08-09T11:30:00Z"
-            },
-            {
-                "hero_image_url": "https://quantana.com.au/wp-content/uploads/2023/10/Urge-Surfing-case-study-2-jpg.webp",
-                "title": "Major Breakthrough in Renewable Energy Technology",
-                "summary": "Scientists have announced a major breakthrough in renewable energy technology, which could significantly reduce the cost of solar power and accelerate the transition to green energy.",
-                "link_url": "https://example.com/news/renewable-energy-breakthrough",
-                "timestamp": "2024-08-09T10:00:00Z"
-            }
-        ];
+      const newsData = [
+        {
+          hero_image_url:
+            "https://quantana.com.au/wp-content/uploads/2023/09/px4-home-jpg.webp",
+          title: "Global Markets Rally Amid Positive Economic Data",
+          summary:
+            "Stock markets around the world saw significant gains today as investors reacted positively to new economic data showing increased consumer spending and lower unemployment rates.",
+          link_url: "https://example.com/news/global-markets-rally",
+          timestamp: "2024-08-09T14:30:00Z",
+        },
+        {
+          hero_image_url:
+            "https://quantana.com.au/wp-content/uploads/2023/10/Web-App-Development-jpg.webp",
+          title: "Innovative Tech Startup Launches AI-Powered Health App",
+          summary:
+            "A new AI-powered health application promises to revolutionize the way we approach personal wellness by offering personalized insights and real-time health monitoring.",
+          link_url: "https://example.com/news/ai-health-app-launch",
+          timestamp: "2024-08-09T13:45:00Z",
+        },
+        {
+          hero_image_url:
+            "https://quantana.com.au/wp-content/uploads/2023/10/Mobile-App-Development-jpg.webp",
+          title: "Wildfires Continue to Ravage California",
+          summary:
+            "Firefighters are battling a series of wildfires across California that have already destroyed hundreds of homes and forced thousands to evacuate.",
+          link_url: "https://example.com/news/california-wildfires-2024",
+          timestamp: "2024-08-09T12:15:00Z",
+        },
+        {
+          hero_image_url:
+            "https://quantana.com.au/wp-content/uploads/2024/07/Blog-Image_11zon-1.jpg",
+          title: "New Study Links Sleep Quality to Heart Health",
+          summary:
+            "A recent study has found a strong correlation between sleep quality and cardiovascular health, suggesting that better sleep could lead to reduced risks of heart disease.",
+          link_url: "https://example.com/news/sleep-quality-heart-health",
+          timestamp: "2024-08-09T11:30:00Z",
+        },
+        {
+          hero_image_url:
+            "https://quantana.com.au/wp-content/uploads/2023/10/Urge-Surfing-case-study-2-jpg.webp",
+          title: "Major Breakthrough in Renewable Energy Technology",
+          summary:
+            "Scientists have announced a major breakthrough in renewable energy technology, which could significantly reduce the cost of solar power and accelerate the transition to green energy.",
+          link_url: "https://example.com/news/renewable-energy-breakthrough",
+          timestamp: "2024-08-09T10:00:00Z",
+        },
+      ];
 
-        const container = document.getElementById('newsContainer');
+      const container = document.getElementById("newsContainer");
 
-        newsData.forEach((news, index) => {
-            const card = document.createElement('div');
-            card.classList.add('news-card');
-            if (index === 0) card.classList.add('visible'); // Show the first card
+      newsData.forEach((news, index) => {
+        const card = document.createElement("div");
+        card.classList.add("news-card");
+        if (index === 0) card.classList.add("visible"); // Show the first card
 
-            card.innerHTML = `
+        card.innerHTML = `
                 <img src="${news.hero_image_url}" alt="${news.title}">
                 <div class="news-content">
                     <h2 class="news-title">${news.title}</h2>
@@ -216,81 +226,107 @@
                 </div>
             `;
 
-            card.addEventListener('click', () => {
-                window.location.href = news.link_url;
-            });
-
-            container.appendChild(card);
+        card.addEventListener("click", () => {
+          window.location.href = news.link_url;
         });
 
-        let currentIndex = 0;
-        const cardElements = document.querySelectorAll('.news-card');
-        let isTransitioning = false;
-        let lastTouchEnd = 0;
-        let touchStartY = 0;
+        container.appendChild(card);
+      });
 
-        function slideToNext() {
-            if (isTransitioning) return;
-            isTransitioning = true;
+      let currentIndex = 0;
+      const cardElements = document.querySelectorAll(".news-card");
+      let isTransitioning = false;
+      let lastTouchEnd = 0;
+      let touchStartY = 0;
 
-            const currentCard = cardElements[currentIndex];
-            const nextIndex = (currentIndex + 1) % cardElements.length;
-            const nextCard = cardElements[nextIndex];
+      function slideToNext() {
+        if (isTransitioning) return;
+        isTransitioning = true;
 
-            currentCard.classList.add('slide-up', 'zoom-out', 'index-1');
-            nextCard.classList.add('visible', 'zoom-in', 'index-2');
+        const currentCard = cardElements[currentIndex];
+        const nextIndex = (currentIndex + 1) % cardElements.length;
+        const nextCard = cardElements[nextIndex];
 
-            setTimeout(() => {
-                currentCard.classList.remove('slide-up', 'visible', 'zoom-out', 'index-1');
-                nextCard.classList.remove('zoom-in', 'index-2');
-                currentIndex = nextIndex;
-                isTransitioning = false;
-            }, 500);
-        }
+        nextCard.style.transition = "none";
+        nextCard.style.transform = "translateY(100%)";
+        nextCard.style.opacity = "0";
+        nextCard.classList.add("visible");
 
-        function slideToPrevious() {
-            if (isTransitioning) return;
-            isTransitioning = true;
-
-            const currentCard = cardElements[currentIndex];
-            const prevIndex = (currentIndex - 1 + cardElements.length) % cardElements.length;
-            const prevCard = cardElements[prevIndex];
-
-            currentCard.classList.add('zoom-out', 'index-2');
-            prevCard.classList.add('visible', 'slide-down', 'zoom-in', 'index-1');
-
-            setTimeout(() => {
-                currentCard.classList.remove('visible', 'zoom-out', 'index-2');
-                prevCard.classList.remove('slide-down', 'zoom-in', 'index-1');
-                currentIndex = prevIndex;
-                isTransitioning = false;
-            }, 500);
-        }
-
-        container.addEventListener('touchstart', (e) => {
-            event.preventDefault();
-            touchStartY = e.touches[0].clientY;
-        }, { passive: false });
-
-        container.addEventListener('touchend', (e) => {
-            const touchEndY = e.changedTouches[0].clientY;
-            const now = Date.now();
-
-            if (now - lastTouchEnd < 500) {
-                return;
-            }
-            lastTouchEnd = now;
-
-            const swipeDistance = touchStartY - touchEndY;
-            if (Math.abs(swipeDistance) > 50) { // Ensure it's a significant swipe
-                if (swipeDistance > 0) {
-                    slideToNext();
-                } else {
-                    slideToPrevious();
-                }
-            }
+        requestAnimationFrame(() => {
+          nextCard.style.transition =
+            "transform 0.5s ease-in-out, opacity 0.5s ease-in-out";
+          currentCard.style.transform = "translateY(-100%)";
+          currentCard.style.opacity = "0";
+          nextCard.style.transform = "translateY(0)";
+          nextCard.style.opacity = "1";
         });
+
+        setTimeout(() => {
+          currentCard.classList.remove("visible");
+          currentCard.style.transition = "none";
+          currentCard.style.transform = "translateY(100%)";
+          currentCard.style.opacity = "0";
+          currentIndex = nextIndex;
+          isTransitioning = false;
+        }, 500);
+      }
+
+      function slideToPrevious() {
+        if (isTransitioning) return;
+        isTransitioning = true;
+
+        const currentCard = cardElements[currentIndex];
+        const prevIndex =
+          (currentIndex - 1 + cardElements.length) % cardElements.length;
+        const prevCard = cardElements[prevIndex];
+
+        prevCard.style.transition = "none";
+        prevCard.style.transform = "translateY(-100%)";
+        prevCard.style.opacity = "0";
+        prevCard.classList.add("visible");
+
+        requestAnimationFrame(() => {
+          prevCard.style.transition =
+            "transform 0.5s ease-in-out, opacity 0.5s ease-in-out";
+          currentCard.style.transform = "translateY(100%)";
+          currentCard.style.opacity = "0";
+          prevCard.style.transform = "translateY(0)";
+          prevCard.style.opacity = "1";
+        });
+
+        setTimeout(() => {
+          currentCard.classList.remove("visible");
+          currentCard.style.transition = "none";
+          currentCard.style.transform = "translateY(-100%)";
+          currentCard.style.opacity = "0";
+          currentIndex = prevIndex;
+          isTransitioning = false;
+        }, 500);
+      }
+
+      container.addEventListener("touchstart", (e) => {
+        touchStartY = e.touches[0].clientY;
+      });
+
+      container.addEventListener("touchend", (e) => {
+        const touchEndY = e.changedTouches[0].clientY;
+        const now = Date.now();
+
+        if (now - lastTouchEnd < 500 || isTransitioning) {
+          return; // Exit early if transition is ongoing or too soon since last touch
+        }
+        lastTouchEnd = now;
+
+        const swipeDistance = touchStartY - touchEndY;
+        if (Math.abs(swipeDistance) > 50) {
+          // Ensure it's a significant swipe
+          if (swipeDistance > 0) {
+            slideToNext();
+          } else {
+            slideToPrevious();
+          }
+        }
+      });
     </script>
-</body>
-
+  </body>
 </html>
